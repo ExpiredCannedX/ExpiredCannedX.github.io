@@ -2,6 +2,14 @@
 
 基于 [VitePress](https://vitepress.dev/zh/) 搭建的个人博客。
 
+🌐 站点地址：<https://expiredcannedx.github.io/>
+
+## 文章列表
+
+| 日期 | 标题 |
+|------|------|
+| 2026-06-30 | [OpenCode GO 接入 CC Switch 指南](https://expiredcannedx.github.io/2026/opencode-go-ccw) |
+
 ## 工程结构
 
 ```

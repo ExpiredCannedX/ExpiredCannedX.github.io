@@ -49,3 +49,36 @@ pnpm docs:preview     # 本地预览构建产物
 - **文章发布流程**：在 `docs/{year}/` 新增 `.md` → 在 `config.ts` 的 `sidebar` 中登记 → 推送至 `master` 触发自动部署。
 - **构建产物与缓存**：`docs/.vitepress/dist` 和 `docs/.vitepress/cache` 已被 `.gitignore` 忽略，无需手动清理。
 - **`.claude` 目录**已被 `.gitignore` 忽略。
+
+## 内容迁移工作流（Obsidian → VitePress）
+
+博文源稿存放于 Obsidian 笔记库（如 `D:\QuashyFlies\Obsidian笔记\实习\<标题>.md`），发布时需转换为 VitePress 兼容格式。以下为可复用的迁移步骤，供后续发布新文章时参照：
+
+### 1. 图片资源处理
+
+- Obsidian 默认图片名为 `Pasted image <时间戳>.png`（含空格），存放在笔记同级的 `img/` 目录。
+- **复制而非移动**源文件到 `docs/public/<文章 slug>/` 子目录，保留 Obsidian 原件。
+- **语义化重命名**：按文章中出现顺序重命名为 `01.png`、`02.png`…，避免空格与无意义命名，便于长期维护。
+- 源路径含空格时，`cp` 命令需用双引号包裹：`cp "源路径" "目标路径"`。
+- 若同一张图在源文中重复出现，迁移时**删除冗余引用**，仅保留首次出现处。
+
+### 2. Markdown 内容转换
+
+- **Frontmatter**：添加 `title: <博客标题>` 与 `outline: deep`。`title` 由 VitePress 渲染为页面大标题，**不要在正文再写 `#` 一级标题**。
+- **标题层级**：源稿常用 `###`（h3）作为章节标题，迁移时**提升为 `##`（h2）**，以匹配 `config.ts` 中 `outline: { level: [2, 3] }` 配置，让右侧目录正常展示。
+- **图片路径改写**：`![](img/Pasted image *.png)` → `![描述性 alt 文本](/<slug>/NN.png)`，使用根路径引用并补充有意义的 alt。
+- 保留原文的文字内容、列表、引用块、分隔线 `---`、外部链接等结构。
+
+### 3. 站点配置登记
+
+发布新文章需同步更新三处链接，避免指向不存在的页面：
+
+- `docs/.vitepress/config.ts` 的 `sidebar`：在对应年份分组 `items` 中登记新文章。
+- `docs/.vitepress/config.ts` 的 `nav`：若「文章」入口需指向最新文章则更新。
+- `docs/index.md` 的 `hero.actions`：「浏览文章」按钮 `link` 指向新文章。
+
+### 4. 验证与提交
+
+- 运行 `pnpm docs:build` 确认无报错（图片路径错误、frontmatter 语法错误均会在此暴露）。
+- 可选 `pnpm docs:dev` 人工复核：图片加载、链接跳转、右侧目录、本地搜索。
+- 文章 slug 建议用英文短横线命名（如 `opencode-go-ccw`），与 `docs/{year}/<slug>.md` 文件名及 `docs/public/<slug>/` 目录名保持一致。
