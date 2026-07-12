@@ -2,6 +2,7 @@
 title: OpenCode GO 接入 CC Switch 指南
 outline: deep
 ---
+# OpenCode GO 接入 CC Switch 指南
 
 ## 0x00 前置说明
 
