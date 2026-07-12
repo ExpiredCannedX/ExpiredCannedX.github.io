@@ -8,8 +8,8 @@
  *      下载并执行该脚本，从而刷新当前页的统计数据。
  */
 
-/** 不蒜子脚本地址（与 config.ts 的 head 注入保持一致） */
-const BUSUANZI_SRC = 'https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.min.js'
+/** 不蒜子脚本地址（npm CDN 分发，与 config.ts 的 head 注入保持一致） */
+const BUSUANZI_SRC = 'https://cdn.jsdelivr.net/npm/busuanzi.pure.js/busuanzi.pure.min.js'
 
 /**
  * 重新触发不蒜子统计：

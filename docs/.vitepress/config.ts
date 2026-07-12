@@ -23,7 +23,8 @@ export default defineConfig({
    * id="busuanzi_value_*" 的 span 文本（纯前端注入，无后端依赖）
    */
   head: [
-    ['script', { async: '', src: 'https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.min.js' }]
+    // 不蒜子脚本已从 ibruce.info 下线，改用 npm CDN 分发（API 端点相同，功能等价）
+    ['script', { async: '', src: 'https://cdn.jsdelivr.net/npm/busuanzi.pure.js/busuanzi.pure.min.js' }]
   ],
 
   // ========== 主题配置 ==========
