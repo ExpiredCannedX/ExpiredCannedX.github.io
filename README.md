@@ -47,3 +47,6 @@ pnpm docs:build
 # 预览构建成果
 pnpm docs:preview
 ```
+
+## Ref
+- vitepress 安装 图片放大、访客统计、Mermaid 等插件：[https://vitepress.yiov.top/](https://vitepress.yiov.top/)
