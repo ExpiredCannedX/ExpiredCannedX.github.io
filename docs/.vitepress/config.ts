@@ -16,6 +16,16 @@ export default defineConfig({
   /** 开启最后更新时间（基于 Git 提交记录） */
   lastUpdated: true,
 
+  // ========== 第三方脚本注入 ==========
+  /**
+   * head: 注入到 HTML <head> 的标签
+   * 当前用于不蒜子访客统计，脚本异步加载后会自动填充页面中
+   * id="busuanzi_value_*" 的 span 文本（纯前端注入，无后端依赖）
+   */
+  head: [
+    ['script', { async: '', src: 'https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.min.js' }]
+  ],
+
   // ========== 主题配置 ==========
   themeConfig: {
     // 参考文档: https://vitepress.dev/reference/default-theme-config

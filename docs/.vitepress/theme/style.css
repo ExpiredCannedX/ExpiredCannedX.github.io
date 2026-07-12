@@ -137,3 +137,67 @@
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
 
+/**
+ * Component: Site Stats（首页访客统计卡片）
+ * -------------------------------------------------------------------------- */
+.site-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 48px auto 0;
+  padding: 20px 32px;
+  max-width: 688px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 12px;
+  background-color: var(--vp-c-bg-soft);
+  box-shadow: var(--vp-shadow-2);
+}
+.site-stats-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.site-stats-label {
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+}
+.site-stats-value {
+  color: var(--vp-c-brand-1);
+  font-size: 22px;
+  font-weight: 600;
+}
+.site-stats-unit {
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+}
+.site-stats-divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--vp-c-border);
+}
+
+/**
+ * Component: Page View（文章页本文阅读量，正文底部）
+ * -------------------------------------------------------------------------- */
+.page-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 24px 0 0;
+  padding: 12px 0 0;
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  border-top: 1px solid var(--vp-c-divider);
+}
+.page-view-icon {
+  font-size: 16px;
+}
+.page-view-label {
+  color: var(--vp-c-text-2);
+}
+.page-view-value {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+}
+
