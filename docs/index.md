@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 📝
     title: 技术文章
-    details: 记录前端、后端开发中的实践经验与踩坑总结，涵盖 Vue、React、Node.js 等技术栈。
+    details: 记录前端、后端开发中的实践经验与踩坑总结，涵盖 Vue、SpringBoot、Redis、MySQL 等技术栈。
   - icon: 🧠
     title: 学习笔记
     details: 整理日常学习中的知识点，包括算法、设计模式、源码阅读等。
