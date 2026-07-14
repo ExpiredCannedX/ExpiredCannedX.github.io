@@ -23,7 +23,12 @@ jobs:
           fetch-depth: 0
       - uses: pnpm/action-setup@v6
         with:
-          version: 11
+          # 锁定与 pnpm-lock.yaml 中 pnpm 自身版本一致的精确版本，
+          # 避免 action-setup 的 self-installer 触发版本切换
+          # （切换时会用 headless install 解析多文档 lockfile 的 pnpm 自身子文档，
+          # 在 optionalDependencies 缺 resolution 的 snapshot 上抛
+          # "Cannot use 'in' operator to search for 'integrity' in undefined"）。
+          version: 11.7.0
       - uses: actions/setup-node@v6
         with:
           node-version: 22
