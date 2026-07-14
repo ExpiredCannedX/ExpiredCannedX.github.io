@@ -22,6 +22,13 @@
  * 现改为自维护 JSONP：每次 SPA 切换时用唯一回调名发起一次请求，直接把返回的
  * site_uv / page_pv / site_pv 写入对应 span。不再重载官方脚本，无竞态、无重复触发。
  * 首屏仍由 config.ts head 注入的官方脚本完成首次统计，本工具仅在路由切换时增量刷新。
+ *
+ * ========== 首屏跳过 ==========
+ * VitePress 首屏启动会调用 router.go()，其末尾无条件触发 onAfterRouteChange
+ * ——即使并未发生真实路由切换。首屏统计已由预渲染的官方脚本完成（SSR 已渲染
+ * busuanzi_value_* span），若不跳过这次会与官方脚本重复请求，导致硬刷新一次
+ * site_pv +2。故 triggerBusuanzi 用 skippedFirstLoad 标志跳过首次调用，
+ * 之后仅在真实 SPA 跳转时刷新。
  */
 
 /** 不蒜子后端 JSONP 端点（与官方脚本 fetch 地址一致） */
@@ -29,6 +36,22 @@ const BUSUANZI_API = 'https://busuanzi.ibruce.info/busuanzi'
 
 /** 递增的回调序号，保证每次请求回调名唯一，避免覆盖未完成的旧回调 */
 let callbackSeq = 0
+
+/**
+ * 是否已跳过首屏那次 onAfterRouteChange。
+ *
+ * VitePress 首屏启动时会调用 router.go()（见 vitepress/app/index.js 的
+ * createApp().then(router.go())），go() 末尾无条件触发 onAfterRouteChange，
+ * 即使是首次加载、并未发生真实路由切换。
+ *
+ * 首屏的统计已由 config.ts head 注入的官方 <script> 完成（SSR 预渲染了
+ * busuanzi_value_* span，脚本执行即可写入）。若 triggerBusuanzi 不跳过这次，
+ * 会与官方脚本重复请求后端，导致硬刷新一次 site_pv +2。
+ *
+ * 首屏 go() 仅触发一次 onAfterRouteChange，之后只在真实 SPA 跳转时才再触发，
+ * 故用一个布尔标志跳过首次即可，无需复位。
+ */
+let skippedFirstLoad = false
 
 /**
  * 将不蒜子返回的数据写入页面中对应的 span：
@@ -59,6 +82,14 @@ function applyStats(data: { site_uv?: string; page_pv?: string; site_pv?: string
 export function triggerBusuanzi(): void {
   // SSR 守卫，防止 docs:build 阶段报 document/window is not defined
   if (typeof document === 'undefined' || typeof window === 'undefined') return
+
+  // 跳过首屏 router.go() 触发的那次 onAfterRouteChange：
+  // 首屏统计已由 config.ts head 注入的官方脚本完成，此处再请求会导致
+  // 硬刷新一次 site_pv +2。仅跳过首次，后续真实路由切换正常刷新。
+  if (!skippedFirstLoad) {
+    skippedFirstLoad = true
+    return
+  }
 
   // 唯一回调名：序号 + 随机数，确保不与任何在途请求冲突
   const callbackName = `__bsz_cb_${callbackSeq++}_${Math.floor(Math.random() * 1e9)}`
