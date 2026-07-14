@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 浏览文章
-      link: /2026/opencode-go-ccw
+      link: /2026/designing-your-life
     - theme: alt
       text: GitHub
       link: https://github.com/ExpiredCannedX

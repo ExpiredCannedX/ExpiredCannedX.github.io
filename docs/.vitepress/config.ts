@@ -42,7 +42,7 @@ export default withMermaid(
      */
     nav: [
       { text: '首页', link: '/' },
-      { text: '文章', link: '/2026/opencode-go-ccw' }
+      { text: '文章', link: '/2026/designing-your-life' }
     ],
 
     // ========== 左侧边栏 ==========
@@ -62,6 +62,7 @@ export default withMermaid(
         text: '2026',
         collapsed: true,
         items: [
+          { text: '人生设计：探索你的现在', link: '/2026/designing-your-life' },
           { text: 'OpenCode GO 接入 CC Switch 指南', link: '/2026/opencode-go-ccw' }
         ]
       },
@@ -106,12 +107,11 @@ export default withMermaid(
     // logo: '/logo.svg',              // 导航栏 logo 图片路径
     // footer: { message: '...', copyright: '...' },  // 页脚
     // editLink: { pattern: '...' },   // "编辑此页"链接
-  }
-  }),
-  {
-    // Mermaid 配置（亮色模式生效，暗色模式由插件自动切换）
-    mermaid: {
-      // 参考: https://mermaid.js.org/config/schema-docs/config.html
     },
-  }
+    {
+      // Mermaid 配置（亮色模式生效，暗色模式由插件自动切换）
+      mermaid: {
+        // 参考: https://mermaid.js.org/config/schema-docs/config.html
+      },
+    })
 )
