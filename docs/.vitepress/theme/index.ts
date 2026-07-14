@@ -42,9 +42,15 @@ export default {
       // SPA 路由切换后重新触发不蒜子统计 + 为新页面图片注册缩放
       // onAfterRouteChange 为 VitePress 1.x 推荐钩子（onAfterRouteChanged 已废弃）
       router.onAfterRouteChange = () => {
-        triggerBusuanzi()
-        // nextTick 等 Vue 完成 DOM 更新后再注册缩放，detach 旧实例防重复绑定
-        nextTick(() => initZoom())
+        // nextTick 等 Vue 完成 DOM 更新后再执行：从文章页跳回首页时，SiteStats 组件
+        // （home-features-after 插槽）此时才挂载，busuanzi_value_site_uv/pv 的 span 才存在于
+        // DOM。不蒜子脚本「执行即扫描」是一次性的，若在 span 挂载前执行会静默跳过，导致首页
+        // UV/PV 停在占位符 --。triggerBusuanzi 同步触发会让脚本抢跑在 Vue 渲染之前。
+        // 同一 nextTick 内一并注册图片缩放，detach 旧实例防重复绑定。
+        nextTick(() => {
+          triggerBusuanzi()
+          initZoom()
+        })
       }
     }
   }

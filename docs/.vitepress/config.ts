@@ -26,7 +26,21 @@ export default withMermaid(
    */
   head: [
     // 不蒜子脚本已从 ibruce.info 下线，改用 npm CDN 分发（API 端点相同，功能等价）
-    ['script', { async: '', src: 'https://cdn.jsdelivr.net/npm/busuanzi.pure.js/busuanzi.pure.min.js' }]
+    ['script', { async: '', src: 'https://cdn.jsdelivr.net/npm/busuanzi.pure.js/busuanzi.pure.min.js' }],
+    /**
+     * Referrer-Policy：强制跨源请求携带完整 URL（含 path）作为 Referer
+     *
+     * 背景：不蒜子后端仅凭 HTTP Referer 区分页面（忽略一切 URL 参数）。
+     * GitHub Pages 默认不返回 Referrer-Policy 响应头，浏览器回落到默认策略
+     * strict-origin-when-cross-origin —— 跨源请求只发送 origin（不含 path）。
+     * 不蒜子是跨源服务（busuanzi.ibruce.info），因此永远拿不到页面路径，
+     * 导致所有文章共用同一个 page_pv 计数器（阅读量跨文章显示相同）。
+     *
+     * no-referrer-when-downgrade：HTTPS→HTTPS（无降级）时发送完整 URL，
+     * 不蒜子为 HTTPS 服务故可正常拿到页面路径；仅在降级到 HTTP 时才不发 Referer，
+     * 隐私成本低于 unsafe-url，亦避免本站外链跳转时无差别暴露完整路径。
+     */
+    ['meta', { name: 'referrer', content: 'no-referrer-when-downgrade' }]
   ],
 
   // ========== 主题配置 ==========
