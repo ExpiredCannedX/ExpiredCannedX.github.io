@@ -12,7 +12,7 @@ hero:
       link: /2026/designing-your-life
     - theme: alt
       text: GitHub
-      link: https://github.com/ExpiredCannedX
+      link: https://github.com/Quashy
 
 features:
   - icon: 📝

@@ -90,7 +90,7 @@ export default withMermaid(
      * - ariaLabel: 可选，无障碍标签
      */
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/ExpiredCannedX' }
+      { icon: 'github', link: 'https://github.com/Quashy' }
     ],
 
     // ========== 本地搜索 ==========
