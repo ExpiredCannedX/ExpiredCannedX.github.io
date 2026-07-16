@@ -8,6 +8,8 @@
 
 | 日期 | 标题 |
 |------|------|
+| 2026-07-16 | [如何参与开源项目](https://quashy.github.io/2026/how-to-contribute-to-open-source) |
+| 2026-07-14 | [人生设计：探索你的现在](https://quashy.github.io/2026/designing-your-life) |
 | 2026-06-30 | [OpenCode GO 接入 CC Switch 指南](https://quashy.github.io/2026/opencode-go-ccw) |
 
 ## 工程结构

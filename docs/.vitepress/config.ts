@@ -76,6 +76,7 @@ export default withMermaid(
         text: '2026',
         collapsed: true,
         items: [
+          { text: '如何参与开源项目', link: '/2026/how-to-contribute-to-open-source' },
           { text: '人生设计：探索你的现在', link: '/2026/designing-your-life' },
           { text: 'OpenCode GO 接入 CC Switch 指南', link: '/2026/opencode-go-ccw' }
         ]
