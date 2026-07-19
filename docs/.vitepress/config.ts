@@ -18,15 +18,12 @@ export default withMermaid(
   /** 开启最后更新时间（基于 Git 提交记录） */
   lastUpdated: true,
 
-  // ========== 第三方脚本注入 ==========
+  // ========== Head 元数据 ==========
   /**
    * head: 注入到 HTML <head> 的标签
-   * 当前用于不蒜子访客统计，脚本异步加载后会自动填充页面中
-   * id="busuanzi_value_*" 的 span 文本（纯前端注入，无后端依赖）
+   * 当前用于设置不蒜子统计请求的 Referrer-Policy
    */
   head: [
-    // 不蒜子脚本已从 ibruce.info 下线，改用 npm CDN 分发（API 端点相同，功能等价）
-    ['script', { async: '', src: 'https://cdn.jsdelivr.net/npm/busuanzi.pure.js/busuanzi.pure.min.js' }],
     /**
      * Referrer-Policy：强制跨源请求携带完整 URL（含 path）作为 Referer
      *
