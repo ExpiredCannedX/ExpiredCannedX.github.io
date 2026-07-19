@@ -1,5 +1,18 @@
 import { defineConfig } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+
+// dayjs UTC 插件：将 Git lastUpdated 时间戳格式化为 ISO 8601（用于 article:modified_time）
+dayjs.extend(utc)
+
+/**
+ * 站点常量（集中管理，避免散落多处）
+ * - SITE_URL：站点根 URL，无尾斜杠，作为 canonical / og:url / og:image / sitemap 的基准
+ * - DEFAULT_OG_IMAGE：站点默认分享图，无专属首图的文章与首页回退引用
+ */
+const SITE_URL = 'https://quashy.github.io'
+const DEFAULT_OG_IMAGE = '/og.png'
 
 /**
  * VitePress 站点配置文件
@@ -37,8 +50,123 @@ export default withMermaid(
      * 不蒜子为 HTTPS 服务故可正常拿到页面路径；仅在降级到 HTTP 时才不发 Referer，
      * 隐私成本低于 unsafe-url，亦避免本站外链跳转时无差别暴露完整路径。
      */
-    ['meta', { name: 'referrer', content: 'no-referrer-when-downgrade' }]
+    ['meta', { name: 'referrer', content: 'no-referrer-when-downgrade' }],
+
+    /**
+     * —— Open Graph 全站默认（社交分享卡片） ——
+     * 按页面变化的 og:title / og:description / og:url / og:type / og:image
+     * 由下方 transformPageData 钩子动态注入并覆盖。
+     */
+    ['meta', { property: 'og:site_name', content: 'QinHuiYang 的博客' }],
+    // og:type 默认 article；首页由 transformPageData 改写为 website
+    ['meta', { property: 'og:type', content: 'article' }],
+    // OG locale 用下划线（zh_CN），区别于 lang 属性的横线（zh-CN）
+    ['meta', { property: 'og:locale', content: 'zh_CN' }],
+
+    /**
+     * —— Twitter Card 全站默认 ——
+     * summary_large_image：有专属首图的文章显示大图卡；
+     * 无图篇与首页由 transformPageData 降级为 summary 小卡。
+     */
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:site', content: '@Expired_Can' }],
   ],
+
+  // ========== Sitemap 站点地图 ==========
+  /**
+   * VitePress 内置 sitemap 生成（>= 1.0），构建时自动产出 /sitemap.xml
+   * 参考: https://vitepress.dev/reference/site-config#sitemap
+   *
+   * - hostname：作为 sitemap 中所有 <loc> 绝对 URL 的基准（无尾斜杠）
+   * - lastmodDateOnly：lastmod 只精确到日（YYYY-MM-DD），避免 Git 秒级提交抖动
+   *
+   * 未启用 cleanUrls，sitemap 自然产出 .html 后缀，与下方 canonical 拼接一致。
+   */
+  sitemap: {
+    hostname: SITE_URL,
+    lastmodDateOnly: true,
+  },
+
+  // ========== 动态 SEO 注入 ==========
+  /**
+   * transformPageData：按页面数据动态注入 SEO meta（SSR 阶段写入 HTML <head>）
+   * 参考: https://vitepress.dev/reference/site-config#transformpagedata
+   *
+   * 设计取舍（单用 transformPageData 而非 transformHead，遵循 KISS）：
+   * 它是「改页面数据」的上游钩子，能同时改 pageData.description 与 frontmatter.head；
+   * 后者会被静态写入 dist/*.html 供爬虫读取。职责集中，避免双钩子同字段竞争。
+   *
+   * 注意：返回值是浅合并，必须展开 ...pageData.frontmatter 后再追加 head，
+   * 否则会丢失原 title / outline 等字段。
+   *
+   * 数据来源：
+   *   og:title        <- pageData.title（VitePress 已从 frontmatter title 或 H1 解析）
+   *   og:description  <- frontmatter.description（回退站点 description）
+   *   og:url/canonical<- 由 relativePath 计算（与 sitemap 同规则：index.md→/，其余→.html）
+   *   og:type         <- 首页 website，其余 article
+   *   og:image        <- frontmatter.ogImage（回退站点默认 /og.png）
+   *   twitter:card    <- 有 ogImage 用 summary_large_image，否则降级 summary
+   *   article:modified_time <- pageData.lastUpdated（毫秒时间戳，dayjs.utc 格式化）
+   */
+  transformPageData(pageData) {
+    const fm = pageData.frontmatter || {}
+
+    // 1. canonical / og:url（与 sitemap 内部 URL 规则对齐）
+    const isHome = /(^|\/)index\.md$/.test(pageData.relativePath)
+    const pageUrl = isHome
+      ? '/'
+      : '/' + pageData.relativePath.replace(/\.md$/, '.html')
+    const canonical = SITE_URL + pageUrl
+
+    // 2. title / description
+    const title = pageData.title || ''
+    const description = fm.description || ''
+
+    // 3. og:image：有专属首图用之，否则回退站点默认图
+    const ogImage = SITE_URL + (fm.ogImage || DEFAULT_OG_IMAGE)
+
+    // 4. twitter:card：无专属图时降级为小卡
+    const twitterCard = fm.ogImage ? 'summary_large_image' : 'summary'
+
+    // 5. og:type：首页 website，其余 article
+    const ogType = isHome ? 'website' : 'article'
+
+    // 6. article:modified_time（lastUpdated 为毫秒时间戳；未 commit 的文章可能为 0，需守卫）
+    const articleMeta: [string, Record<string, string>][] = []
+    if (!isHome && typeof pageData.lastUpdated === 'number' && pageData.lastUpdated > 0) {
+      articleMeta.push([
+        'meta',
+        { property: 'article:modified_time', content: dayjs.utc(pageData.lastUpdated).toISOString() },
+      ])
+    }
+
+    // 7. 组装 frontmatter.head
+    const head: [string, Record<string, string>][] = [
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: description }],
+      ['meta', { property: 'og:url', content: canonical }],
+      ['meta', { property: 'og:type', content: ogType }],
+      ['meta', { property: 'og:image', content: ogImage }],
+      ['meta', { name: 'twitter:card', content: twitterCard }],
+      ['link', { rel: 'canonical', href: canonical }],
+      ...articleMeta,
+    ]
+    // description 为空时剔除 og:description，避免空字符串被社交平台渲染为「...」
+    const headFiltered = description
+      ? head
+      : head.filter(
+          ([tag, attrs]) => !(tag === 'meta' && (attrs as Record<string, string>).property === 'og:description'),
+        )
+
+    // 8. 浅合并：展开原 frontmatter 保留 title / outline 等，再注入 head
+    return {
+      description,
+      frontmatter: {
+        ...pageData.frontmatter,
+        head: headFiltered,
+      },
+    }
+  },
 
   // ========== 主题配置 ==========
   themeConfig: {

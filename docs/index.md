@@ -1,6 +1,7 @@
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
+description: 秦晖洋的个人技术博客，记录前端、后端开发实践与踩坑总结，分享学习笔记与项目实战，涵盖 Vue、SpringBoot、Redis、MySQL 等技术栈。
 
 hero:
   name: "秦晖洋"
