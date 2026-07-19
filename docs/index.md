@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 浏览文章
-      link: /2026/designing-your-life
+      link: /2026/from-quanpin-to-shuangpin
     - theme: alt
       text: GitHub
       link: https://github.com/Quashy
