@@ -46,7 +46,7 @@ pnpm docs:preview     # 本地预览构建产物
 
 - **包管理器固定为 pnpm**：`package.json` 通过 `devEngines.packageManager` 锁定 pnpm ^11.7.0；CI 也使用 pnpm 11。请勿改用 npm/yarn，避免 lockfile 冲突。
 - **注释语言**：现有配置与文档注释均为简体中文，新增注释请保持一致。
-- **文章发布流程**：在 `docs/{year}/` 新增 `.md` → 在 `config.ts` 的 `sidebar` 中登记 → 推送至 `master` 触发自动部署。
+- **文章发布流程**：以仓库根目录 `AGENTS.md` 的「新文章发布协议」为准。文章正文、侧边栏、顶部「文章」、首页「浏览文章」和 README 文章列表必须同步更新，再推送至 `master` 触发自动部署。
 - **构建产物与缓存**：`docs/.vitepress/dist` 和 `docs/.vitepress/cache` 已被 `.gitignore` 忽略，无需手动清理。
 - **`.claude` 目录**已被 `.gitignore` 忽略。
 
@@ -64,18 +64,19 @@ pnpm docs:preview     # 本地预览构建产物
 
 ### 2. Markdown 内容转换
 
-- **Frontmatter**：添加 `title: <博客标题>` 与 `outline: deep`。`title` 由 VitePress 渲染为页面大标题，**不要在正文再写 `#` 一级标题**。
+- **Frontmatter**：添加 `title: <博客标题>` 与 `outline: deep`，并在正文保留与标题一致的 `#` 一级标题，延续现有文章结构。
 - **标题层级**：源稿常用 `###`（h3）作为章节标题，迁移时**提升为 `##`（h2）**，以匹配 `config.ts` 中 `outline: { level: [2, 3] }` 配置，让右侧目录正常展示。
 - **图片路径改写**：`![](img/Pasted image *.png)` → `![描述性 alt 文本](/<slug>/NN.png)`，使用根路径引用并补充有意义的 alt。
 - 保留原文的文字内容、列表、引用块、分隔线 `---`、外部链接等结构。
 
 ### 3. 站点配置登记
 
-发布新文章需同步更新三处链接，避免指向不存在的页面：
+发布新文章需同步更新四个发现入口，所有入口使用同一文章路由：
 
 - `docs/.vitepress/config.ts` 的 `sidebar`：在对应年份分组 `items` 中登记新文章。
 - `docs/.vitepress/config.ts` 的 `nav`：若「文章」入口需指向最新文章则更新。
 - `docs/index.md` 的 `hero.actions`：「浏览文章」按钮 `link` 指向新文章。
+- `README.md` 的文章列表：在顶部新增发布日期、标题和完整线上链接。
 
 ### 4. 验证与提交
 
