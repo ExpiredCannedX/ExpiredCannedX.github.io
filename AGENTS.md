@@ -50,7 +50,7 @@ pnpm docs:preview
 ## 文章内容约定
 
 - 文件名使用英文小写短横线形式的 slug，例如 `from-quanpin-to-shuangpin.md`。
-- 文章至少包含 `title` 和 `outline: deep` frontmatter，并在正文保留与标题一致的一级标题。
+- 文章至少包含 `date`、`title` 和 `outline: deep` frontmatter，并在正文保留与标题一致的一级标题。`date` 格式为 `YYYY-MM-DD HH:mm`（北京时间），供 RSS 订阅源生成准确的发布时间。
 - 正文章节以二级标题为主，需要细分时使用三级标题，使右侧目录能够正确生成。
 - 图片复制到 `docs/public/<slug>/`，使用 `01.png`、`02.png` 等稳定文件名；保留源文件，不执行移动或删除。
 - Markdown 中使用根路径引用图片，例如 `![说明](/<slug>/01.png)`，并提供有意义的替代文本。
@@ -66,9 +66,10 @@ pnpm docs:preview
 4. 将 `docs/index.md` 首页「浏览文章」按钮的 `link` 更新为同一路由。
 5. 在 `README.md` 的文章列表顶部新增日期、标题和完整线上链接。
 
-统一先确定以下三个值，再复制到所有入口，避免手工重复拼写时产生漂移：
+统一先确定以下四个值，再复制到所有入口，避免手工重复拼写时产生漂移：
 
 ```text
+发布日期：<YYYY-MM-DD HH:mm>（北京时间，与 README 文章列表中的日期保持一致）
 文章标题：<title>
 文章路由：/<year>/<slug>
 线上链接：https://quashy.github.io/<year>/<slug>

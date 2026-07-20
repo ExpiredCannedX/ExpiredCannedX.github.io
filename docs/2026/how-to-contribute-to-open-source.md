@@ -1,4 +1,5 @@
 ---
+date: 2026-07-16 17:12
 title: 如何参与开源项目
 outline: deep
 description: 面向零基础开发者，完整讲解开源贡献全流程：Fork、Clone、建分支、修改、推送、发 PR 到合并，附 PR 模板与提交规范，并以 first-contributions 仓库实操演示。

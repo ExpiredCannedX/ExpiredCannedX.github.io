@@ -1,4 +1,5 @@
 ---
+date: 2026-06-30 14:25
 title: OpenCode GO 接入 CC Switch 指南
 outline: deep
 description: OpenCode GO 是聚合国产模型的低成本订阅服务，支持支付宝。本文给出将其接入 CC Switch 路由工具的完整步骤：获取 API Key、配置本地路由、添加供应商并开启路由。
