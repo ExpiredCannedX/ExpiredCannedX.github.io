@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
+import { RssPlugin, RSSOptions } from 'vitepress-plugin-rss'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
@@ -13,6 +14,29 @@ dayjs.extend(utc)
  */
 const SITE_URL = 'https://quashy.github.io'
 const DEFAULT_OG_IMAGE = '/og.png'
+
+/**
+ * RSS 订阅源配置（vitepress-plugin-rss）
+ * 构建时自动产出 feed.rss，供 RSS 阅读器订阅
+ * 参考: https://www.npmjs.com/package/vitepress-plugin-rss
+ */
+const RSS: RSSOptions = {
+  title: 'QinHuiYang 的博客',
+  baseUrl: SITE_URL,
+  description: '秦晖洋的个人技术博客',
+  language: 'zh-cn',
+  copyright: `Copyright © ${new Date().getFullYear()} 秦晖洋`,
+  author: {
+    name: '秦晖洋',
+    link: 'https://github.com/Quashy',
+  },
+  icon: true,     // 导航栏社交图标区显示 RSS 图标
+  filename: 'feed.xml',  // .xml 后缀确保服务器返回 charset=utf-8，避免中文乱码
+  ignoreHome: true,
+  // filter 不限定年份：所有 /20\d{2}/ 目录下的文章自动收录，未来 2027/2028 无需改配置
+  filter: (post) => !!post.url && /^\/\d{4}\//.test(post.url),
+}
+
 
 /**
  * VitePress 站点配置文件
@@ -77,6 +101,9 @@ export default withMermaid(
      */
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:site', content: '@Expired_Can' }],
+
+    // RSS 自动发现：让 RSS 阅读器能自动识别订阅源
+    ['link', { rel: 'alternate', type: 'application/rss+xml', href: '/feed.xml', title: 'RSS 订阅' }],
   ],
 
   // ========== Sitemap 站点地图 ==========
@@ -267,6 +294,15 @@ export default withMermaid(
    */
   markdown: {
     lineNumbers: true,
+  },
+
+  // ========== Vite 插件 ==========
+  /**
+   * vite.plugins: Vite 构建期插件
+   * - RssPlugin: 构建时自动生成 feed.rss
+   */
+  vite: {
+    plugins: [RssPlugin(RSS)],
   },
 
   // ========== Mermaid 配置 ==========
